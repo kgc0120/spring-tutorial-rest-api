@@ -3,6 +3,10 @@ package com.example.demo.events;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +20,7 @@ import lombok.Setter;
 @Entity
 public class Event {
 
+	@Id @GeneratedValue
 	private Integer id;
 	private String name; 
 	private String description; 
@@ -29,5 +34,7 @@ public class Event {
 	private int limitOfEnrollment;
 	private boolean offline;
 	private boolean free;
+	@Enumerated(EnumType.STRING) //ordinal 순서로 저장되기 때문에 나중에 순서가 바뀌면 문제가 생길 수 있다 그러므로 STRING 추천
 	private EventStatus eventStatus;
+	
 }
