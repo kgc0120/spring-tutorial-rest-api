@@ -54,6 +54,9 @@ public class EventControllerTests {
 				.name("Spring")
 				.description("REST API Development with Spring")
 				.beginEnrollmentDateTime(LocalDateTime.of(2020, 11, 10, 11, 15))
+				.closeEnrollmentDateTime(LocalDateTime.of(2020, 11, 17, 11, 15))
+				.beginEventDateTime(LocalDateTime.of(2020, 11, 10, 11, 15))
+				.endEventDateTime(LocalDateTime.of(2020, 11, 20, 11, 15))
 				.basePrice(100)
 				.maxPrice(200)
 				.limitOfEnrollment(100)
@@ -118,6 +121,27 @@ public class EventControllerTests {
 	@Test
 	public void createEvent_Bad_Request_Empty_Input() throws Exception {
 		EventDto eventDto = EventDto.builder().build();
+		
+		this.mockMvc.perform(post("/api/events")
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(this.objectMapper.writeValueAsString(eventDto)))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void createEvent_Bad_Request_Wrong_Input() throws Exception {
+		EventDto eventDto = EventDto.builder()
+				.name("Spring")
+				.description("REST API Development with Spring")
+				.beginEnrollmentDateTime(LocalDateTime.of(2020, 11, 20, 11, 15))
+				.closeEnrollmentDateTime(LocalDateTime.of(2020, 11, 17, 11, 15))
+				.beginEventDateTime(LocalDateTime.of(2020, 11, 29, 11, 15))
+				.endEventDateTime(LocalDateTime.of(2020, 11, 20, 11, 15))
+				.basePrice(10000)
+				.maxPrice(200)
+				.limitOfEnrollment(100)
+				.location("낙성대 5번 출구")
+				.build();
 		
 		this.mockMvc.perform(post("/api/events")
 					.contentType(MediaType.APPLICATION_JSON_UTF8)

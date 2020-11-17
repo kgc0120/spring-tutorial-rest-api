@@ -7,10 +7,10 @@ import java.net.URI;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.internal.Errors;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,15 +27,23 @@ public class EventController{
 	
 	private final ModelMapper modelMapper;
 	
-	public EventController(EventRespository eventRepository, ModelMapper modelMapper) {
+	private final EventValidator eventValidator;
+	
+	public EventController(EventRespository eventRepository, ModelMapper modelMapper, EventValidator eventValidator) {
 		this.eventRepository = eventRepository;
 		this.modelMapper = modelMapper;
+		this.eventValidator = eventValidator;
 	}
 	
 	@PostMapping // 입력값을 제한하기 위해서 event객체를 eventDto 객체로 변경
 	public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
 		System.out.println("test!!!!!!!!!!!!");
 		
+		if(errors.hasErrors()) {
+			return ResponseEntity.badRequest().build();
+		}
+		
+		eventValidator.validate(eventDto, errors);
 		if(errors.hasErrors()) {
 			return ResponseEntity.badRequest().build();
 		}
