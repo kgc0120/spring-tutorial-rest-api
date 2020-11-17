@@ -4,6 +4,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.net.URI;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,12 +20,26 @@ public class EventController{
 
 	private final EventRespository eventRepository;
 	
-	public EventController(EventRespository eventRepository) {
+	private final ModelMapper modelMapper;
+	
+	public EventController(EventRespository eventRepository, ModelMapper modelMapper) {
 		this.eventRepository = eventRepository;
+		this.modelMapper = modelMapper;
 	}
 	
-	@PostMapping
-	public ResponseEntity createEvent(@RequestBody  Event event) {
+	@PostMapping // 입력값을 제한하기 위해서 event객체를 eventDto 객체로 변경
+	public ResponseEntity createEvent(@RequestBody EventDto eventDto) {
+		/*
+		 * event -> eventDto로 변경함으로써 eventDto를 하나하나 event로 바꿔줘야 함 
+		 * 
+		 * ex)
+		 * Event event = Event.builder() .name(eventDto.getName())
+		 * 				   				 .description(eventDto.getDescription()) 
+		 * 								 .build();
+		 */
+		
+		// 위의 과정을 단순화하기 위해서 modelMapper 사용 maven에 의존성 등록 후 bean으로 modelmapper 등록
+		Event event = modelMapper.map(eventDto, Event.class);
 		Event newEvent = this.eventRepository.save(event);
 		URI createdUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
 		return ResponseEntity.created(createdUri).body(event);
