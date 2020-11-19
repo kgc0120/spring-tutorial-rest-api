@@ -37,8 +37,6 @@ public class EventController{
 	
 	@PostMapping // 입력값을 제한하기 위해서 event객체를 eventDto 객체로 변경
 	public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
-		System.out.println("test!!!!!!!!!!!!");
-		
 		if(errors.hasErrors()) {
 			return ResponseEntity.badRequest().body(errors);
 		}
@@ -59,6 +57,7 @@ public class EventController{
 		
 		// 위의 과정을 단순화하기 위해서 modelMapper 사용 maven에 의존성 등록 후 bean으로 modelmapper 등록
 		Event event = modelMapper.map(eventDto, Event.class);
+		event.update();
 		Event newEvent = this.eventRepository.save(event);
 		URI createdUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
 		return ResponseEntity.created(createdUri).body(event);

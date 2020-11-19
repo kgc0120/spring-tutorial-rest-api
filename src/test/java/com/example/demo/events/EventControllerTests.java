@@ -73,8 +73,8 @@ public class EventControllerTests {
 				.andExpect(jsonPath("id").exists())
 				.andExpect(header().exists(HttpHeaders.LOCATION))
 				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
-				.andExpect(jsonPath("id").value(Matchers.not(100)))
-				.andExpect(jsonPath("free").value(Matchers.not(true)))
+				.andExpect(jsonPath("free").value(false))
+				.andExpect(jsonPath("offline").value(true))
 				.andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
 		;
 		
@@ -120,7 +120,12 @@ public class EventControllerTests {
 	
 	@Test
 	public void createEvent_Bad_Request_Empty_Input() throws Exception {
-		EventDto eventDto = EventDto.builder().build();
+		EventDto eventDto = EventDto.builder()
+				.beginEnrollmentDateTime(LocalDateTime.of(2020, 11, 20, 11, 15))
+				.closeEnrollmentDateTime(LocalDateTime.of(2020, 11, 17, 11, 15))
+				.beginEventDateTime(LocalDateTime.of(2020, 11, 29, 11, 15))
+				.endEventDateTime(LocalDateTime.of(2020, 11, 20, 11, 15))
+				.build();
 		
 		this.mockMvc.perform(post("/api/events")
 					.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -144,7 +149,7 @@ public class EventControllerTests {
 				.build();
 		
 		this.mockMvc.perform(post("/api/events")
-					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.contentType(MediaType.APPLICATION_JSON)
 					.content(this.objectMapper.writeValueAsString(eventDto)))
 					.andDo(print())
 				.andExpect(status().isBadRequest())
