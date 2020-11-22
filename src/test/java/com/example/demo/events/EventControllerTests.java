@@ -1,5 +1,6 @@
 package com.example.demo.events;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -12,14 +13,17 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.common.RestDocsConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
@@ -32,6 +36,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // 조금 더 빠르다? 조금 더 구역을 나눠서 테스트한다?
 // 단위 테스트로 보기는 힘들다
 // @WebMvcTest
+
+@AutoConfigureRestDocs
+@Import(RestDocsConfiguration.class)
 public class EventControllerTests {
 
 	@Autowired
@@ -66,19 +73,20 @@ public class EventControllerTests {
 		
 		mockMvc.perform(post("/api/events/")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_VALUE)
+				.accept(MediaTypes.HAL_JSON_UTF8_VALUE)
 				.content(objectMapper.writeValueAsString(event)))
 				.andDo(print())
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("id").exists())
 				.andExpect(header().exists(HttpHeaders.LOCATION))
-				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_UTF8_VALUE))
 				.andExpect(jsonPath("free").value(false))
 				.andExpect(jsonPath("offline").value(true))
 				.andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
 				.andExpect(jsonPath("_links.self").exists())
 				.andExpect(jsonPath("_links.query-events").exists())
 				.andExpect(jsonPath("_links.update-event").exists())
+				.andDo(document("create-event"))
 		;
 		
 //		java.lang.SecurityException: class "org.hamcrest.Matchers"'s signer information does not match signer 
