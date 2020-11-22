@@ -66,7 +66,7 @@ public class EventControllerTests {
 		
 		mockMvc.perform(post("/api/events/")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON)
+				.accept(MediaTypes.HAL_JSON_VALUE)
 				.content(objectMapper.writeValueAsString(event)))
 				.andDo(print())
 				.andExpect(status().isCreated())
@@ -76,6 +76,9 @@ public class EventControllerTests {
 				.andExpect(jsonPath("free").value(false))
 				.andExpect(jsonPath("offline").value(true))
 				.andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
+				.andExpect(jsonPath("_links.self").exists())
+				.andExpect(jsonPath("_links.query-events").exists())
+				.andExpect(jsonPath("_links.update-event").exists())
 		;
 		
 //		java.lang.SecurityException: class "org.hamcrest.Matchers"'s signer information does not match signer 

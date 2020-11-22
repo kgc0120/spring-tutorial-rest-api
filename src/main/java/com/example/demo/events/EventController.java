@@ -1,13 +1,10 @@
 package com.example.demo.events;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-
-import java.net.URI;
-
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -15,12 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+import java.net.URI;
 
 
 //hateoas 1.0.2 버전 이후부터는 mvc 패키지가 빠졌서 인지.. 위와 같이 static import 추가해서 해결
 
 @Controller
-@RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class EventController{
 
 	private final EventRespository eventRepository;
@@ -59,7 +59,14 @@ public class EventController{
 		Event event = modelMapper.map(eventDto, Event.class);
 		event.update();
 		Event newEvent = this.eventRepository.save(event);
-		URI createdUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
-		return ResponseEntity.created(createdUri).body(event);
+		
+		// Link 추가
+		ControllerLinkBuilder selfLinkBuilder = linkTo(EventController.class).slash(newEvent.getId());
+		URI createdUri = selfLinkBuilder.toUri();
+		EventResource eventResource = new EventResource(event);
+		eventResource.add(linkTo(EventController.class).withRel("query-events"));
+		// eventResource.add(selfLinkBuilder.withSelfRel());
+		eventResource.add(selfLinkBuilder.withRel("update-event"));
+		return ResponseEntity.created(createdUri).body(eventResource);
 	}
 }

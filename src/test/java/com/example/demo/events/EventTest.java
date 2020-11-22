@@ -2,7 +2,7 @@ package com.example.demo.events;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
@@ -34,7 +34,7 @@ public class EventTest {
 		
 	}
 	
-	@org.junit.Test
+	@Test
 	@Parameters// (method = "parametersForTestFree") method 이름과 test 메소드 이름 앞에 parameters 제외하고 같으면 생략 가능
 	public void testFree(int basePrice, int maxPrice, boolean isFree) {
 		// Given 이런 상태에서
@@ -60,7 +60,7 @@ public class EventTest {
 		};
 	}
 	
-	@org.junit.Test
+	@Test
 	@Parameters (method = "parametersForTestOffline")
 	public void testOffline(String location, boolean isOffline) {
 		// Given 이런 상태에서
