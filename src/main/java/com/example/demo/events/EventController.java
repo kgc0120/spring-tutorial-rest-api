@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.demo.events.common.ErrorsResource;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.net.URI;
@@ -38,12 +40,12 @@ public class EventController{
 	@PostMapping // 입력값을 제한하기 위해서 event객체를 eventDto 객체로 변경
 	public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
 		if(errors.hasErrors()) {
-			return ResponseEntity.badRequest().body(errors);
+			return badRequest(errors);
 		}
 		
 		eventValidator.validate(eventDto, errors);
 		if(errors.hasErrors()) {
-			return ResponseEntity.badRequest().body(errors);
+			return badRequest(errors);
 		}
 		
 		/*
@@ -68,5 +70,9 @@ public class EventController{
 		// eventResource.add(selfLinkBuilder.withSelfRel());
 		eventResource.add(selfLinkBuilder.withRel("update-event"));
 		return ResponseEntity.created(createdUri).body(eventResource);
+	}
+	
+	private ResponseEntity badRequest(Errors errors) {
+		return ResponseEntity.badRequest().body(new ErrorsResource(errors));
 	}
 }
