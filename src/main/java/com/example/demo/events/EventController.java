@@ -3,6 +3,7 @@ package com.example.demo.events;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.net.URI;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,6 +84,19 @@ public class EventController{
 		var pagedResources =  assembler.toResource(page, e -> new EventResource(e));
 		return ResponseEntity.ok(pagedResources);
 	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity getEvent(@PathVariable Integer id) {
+		Optional<Event> optionalEvent = this.eventRepository.findById(id);
+		if (optionalEvent.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		Event event = optionalEvent.get();
+		EventResource eventResource = new EventResource(event);
+		return ResponseEntity.ok(eventResource);
+	}
+	
 	
 	private ResponseEntity badRequest(Errors errors) {
 		return ResponseEntity.badRequest().body(new ErrorsResource(errors));

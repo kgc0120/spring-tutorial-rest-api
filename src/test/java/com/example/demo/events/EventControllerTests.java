@@ -236,12 +236,12 @@ public class EventControllerTests {
 	
 	@Test
 	public void queryEvents() throws Exception {
-		//Given
+		// Given
 		IntStream.range(0, 30).forEach(i -> {
 			this.generateEvent(i);
 		});
 		
-		//when
+		// When & Then
 		this.mockMvc.perform(get("/api/events")
 					.param("page", "1")
 					.param("size", "10")
@@ -252,19 +252,44 @@ public class EventControllerTests {
 				.andExpect(jsonPath("page").exists())
 				.andExpect(jsonPath("_embedded.eventList[0]._links.self").exists())
 				.andExpect(jsonPath("_links.self").exists())
-				.andExpect(jsonPath("_links.profile").exists())
+				// .andExpect(jsonPath("_links.profile").exists())
 				.andDo(document("query-events"))
 		;
 	}
+	
+	@Test
+	public void getEvent() throws Exception {
+		//Given
+		Event event = this.generateEvent(100);
+		
+		//When & Then
+		this.mockMvc.perform(get("/api/events/{id}", event.getId()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("name").exists())
+			.andExpect(jsonPath("id").exists())
+			.andExpect(jsonPath("_links.self").exists())
+			// .andExpect(jsonPath("_links.profile").exists())
+			;
+	}
+	
+	@Test
+	public void getEvent404() throws Exception {
+		
+		//When & Then
+		this.mockMvc.perform(get("/api/events/11883"))
+			.andExpect(status().isNotFound())
+			
+		;
+	}
 
-	private void generateEvent(int index) {
+	private Event generateEvent(int index) {
 		// TODO Auto-generated method stub
 		Event event = Event.builder()
 				.name("event" + index)
 				.description("test event")
 				.build();
 		
-		this.eventRepository.save(event);
+		return this.eventRepository.save(event);
 	}
 	
 	
