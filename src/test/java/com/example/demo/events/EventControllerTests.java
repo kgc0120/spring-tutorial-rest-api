@@ -11,6 +11,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -21,6 +22,7 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -61,6 +63,8 @@ public class EventControllerTests {
 	@Autowired
 	EventRespository eventRepository;
 	
+	@Autowired
+	ModelMapper modelMapper;
 	/*
 	 * @MockBean EventRespository eventRepository;
 	 */
@@ -281,12 +285,98 @@ public class EventControllerTests {
 			
 		;
 	}
+	
+	@Test
+	public void updateEvent() throws Exception {
+		// Given
+		Event event = this.generateEvent(200);
+		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
+		String eventName = "Updated Event";
+		eventDto.setName(eventName);
+		
+		// When & Then
+		this.mockMvc.perform(put("/api/events/{id}", event.getId())
+					.contentType(MediaType.APPLICATION_JSON_UTF8 )
+					.content(this.objectMapper.writeValueAsString(eventDto))
+				)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("name").value(eventName))
+			.andExpect(jsonPath("_links.self").exists())
+			;
+		
+	}
+	
+	@Test
+	public void updateEvent400_Empty() throws Exception {
+		// Given
+		Event event = this.generateEvent(200);
+		EventDto eventDto = new EventDto();
+		
+		// When & Then
+		this.mockMvc.perform(put("/api/events/{id}", event.getId())
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(this.objectMapper.writeValueAsString(eventDto))
+				)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			;
+		
+	}
+	
+	@Test
+	public void updateEvent400_Wrong() throws Exception {
+		// Given
+		Event event = this.generateEvent(200);
+		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
+		eventDto.setBasePrice(20000);
+		eventDto.setMaxPrice(1000);
+		
+		// When & Then
+		this.mockMvc.perform(put("/api/events/{id}", event.getId())
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(this.objectMapper.writeValueAsString(eventDto))
+				)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			;
+		
+	}
+	
+	@Test
+	public void updateEvent404() throws Exception {
+		// Given
+		Event event = this.generateEvent(200);
+		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
+		
+		// When & Then
+		this.mockMvc.perform(put("/api/events/1231233")
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(this.objectMapper.writeValueAsString(eventDto))
+				)
+			.andDo(print())
+			.andExpect(status().isNotFound())
+			;
+		
+	}
+	
 
 	private Event generateEvent(int index) {
 		// TODO Auto-generated method stub
 		Event event = Event.builder()
 				.name("event" + index)
 				.description("test event")
+				.beginEnrollmentDateTime(LocalDateTime.of(2020, 11, 10, 11, 15))
+				.closeEnrollmentDateTime(LocalDateTime.of(2020, 11, 17, 11, 15))
+				.beginEventDateTime(LocalDateTime.of(2020, 11, 10, 11, 15))
+				.endEventDateTime(LocalDateTime.of(2020, 11, 20, 11, 15))
+				.basePrice(100)
+				.maxPrice(200)
+				.limitOfEnrollment(100)
+				.location("낙성대 5번 출구")
+				.free(false)
+				.offline(true)
+				.eventStatus(EventStatus.DRAFT)
 				.build();
 		
 		return this.eventRepository.save(event);
