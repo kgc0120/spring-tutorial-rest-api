@@ -1,4 +1,4 @@
-package com.example.common;
+package com.example.demo.common;
 
 import org.junit.Ignore;
 import org.junit.runner.RunWith;

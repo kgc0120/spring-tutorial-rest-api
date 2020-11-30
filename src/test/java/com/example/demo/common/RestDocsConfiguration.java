@@ -1,4 +1,4 @@
-package com.example.common;
+package com.example.demo.common;
 
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
 import org.springframework.boot.test.context.TestConfiguration;

@@ -26,7 +26,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-import com.example.common.BaseControllerTest;
+import com.example.demo.common.BaseControllerTest;
 
 public class EventControllerTests extends BaseControllerTest{
 

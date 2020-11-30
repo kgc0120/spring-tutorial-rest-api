@@ -1,4 +1,4 @@
-package com.example.index;
+package com.example.demo.index;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.Test;
 
-import com.example.common.BaseControllerTest;
+import com.example.demo.common.BaseControllerTest;
 
 
 public class IndexControllerTest extends BaseControllerTest{
