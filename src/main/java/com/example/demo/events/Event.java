@@ -7,6 +7,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.ManyToAny;
+
+import com.example.demo.accounts.Account;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +41,8 @@ public class Event {
 	private boolean free;
 	@Enumerated(EnumType.STRING) //ordinal 순서로 저장되기 때문에 나중에 순서가 바뀌면 문제가 생길 수 있다 그러므로 STRING 추천
 	private EventStatus eventStatus = EventStatus.DRAFT;
+	@ManyToOne
+	private Account manager;
 	
 	public void update() {
 		// Update free

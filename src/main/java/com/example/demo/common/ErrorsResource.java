@@ -1,4 +1,4 @@
-package com.example.demo.events.common;
+package com.example.demo.common;
 
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;

@@ -1,4 +1,4 @@
-package com.example.demo.events.common;
+package com.example.demo.common;
 
 import java.io.IOException;
 
