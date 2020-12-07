@@ -52,18 +52,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 	}
 
-	@Override
-	// Spring Security 안으로는 들어온다.
-	protected void configure(HttpSecurity http) throws Exception {
-		http.
-			anonymous()
-			.and()
-			.formLogin()
-			.and()
-			.authorizeRequests()
-			.mvcMatchers(HttpMethod.GET, "/api/**").authenticated() //요청에 대해서 인증이 필요함
-			.anyRequest().authenticated();
-	}
+//	폼 인증
+//	@Override
+//	// Spring Security 안으로는 들어온다.
+//	protected void configure(HttpSecurity http) throws Exception {
+//		http.
+//			anonymous()
+//			.and()
+//			.formLogin()
+//			.and()
+//			.authorizeRequests()
+//			.mvcMatchers(HttpMethod.GET, "/api/**").authenticated() //요청에 대해서 인증이 필요함
+//			.anyRequest().authenticated();
+//	}
 
 	
 	

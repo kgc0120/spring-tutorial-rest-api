@@ -29,7 +29,7 @@ public class AppConfig {
 			return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		}
 		
-		@Bean
+		// @Bean 같은 유저정보가 두번 입력 되어서 테스트 실패에 따라서 주석처리
 		public ApplicationRunner applicationRunner() {
 			return new ApplicationRunner() {
 				
