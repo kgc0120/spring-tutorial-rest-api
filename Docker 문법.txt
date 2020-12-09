@@ -1,0 +1,22 @@
+docker 명령어
+
+docker ps - containers 확인
+
+docker exec - 어떤 커맨드를 실행하겠다 
+-i 이터렉트 모드로 실행 하겠다 
+-t 타겟인 컨테이너 지정
+ rest bash 컨테이너에 어떤 명령어를 실행할지
+실행하면 컨테이너 안으로 들어감 (exec -t -t rest bash)
+
+su - postgres - postgres로 유저 변경
+
+psql -d postgres -U postgres - connect to a database
+
+psql -d postgres -U postgres -W  - connect to a database
+
+\/ - 데이터 베이스 확인
+
+\dt - 테이블 확인
+
+
+

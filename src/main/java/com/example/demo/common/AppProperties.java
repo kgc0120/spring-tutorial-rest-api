@@ -10,7 +10,7 @@ import lombok.Setter;
 
 //spring boot 저절로 바인딩 받아준다.
 @Component
-@ConfigurationProperties("myApp")
+@ConfigurationProperties(prefix = "my-app")
 @Getter @Setter
 public class AppProperties {
 
