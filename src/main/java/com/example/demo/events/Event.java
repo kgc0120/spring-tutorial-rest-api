@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.ManyToAny;
 
 import com.example.demo.accounts.Account;
+import com.example.demo.accounts.AccountSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +44,7 @@ public class Event {
 	@Enumerated(EnumType.STRING) //ordinal 순서로 저장되기 때문에 나중에 순서가 바뀌면 문제가 생길 수 있다 그러므로 STRING 추천
 	private EventStatus eventStatus = EventStatus.DRAFT;
 	@ManyToOne
+	@JsonSerialize(using = AccountSerializer.class)
 	private Account manager;
 	
 	public void update() {
